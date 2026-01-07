@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TOPIK I Study ♡ Idol Style</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;800&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'M PLUS Rounded 1c', 'Noto Sans KR', sans-serif;
+            background-color: #fdf4ff; /* Very light purple bg */
+            background-image: radial-gradient(#f5d0fe 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        .kr-text {
+            font-family: 'Noto Sans KR', sans-serif;
+        }
+        .tab-active {
+            color: #d946ef; /* Fuchsia 500 */
+            border-bottom: 3px solid #d946ef;
+        }
+        /* Custom scrollbar for cuteness */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #fdf4ff; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #e879f9; 
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #d946ef; 
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+        }
+        .animate-fade-in-up {
+            animation: fadeInUp 0.5s ease-out;
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="text-gray-700 min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="glass-panel sticky top-0 z-20 shadow-sm border-b border-purple-100">
+        <div class="max-w-5xl mx-auto px-4 py-4 flex justify-between items-center">
+            <h1 class="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-pink-500 flex items-center gap-2">
+                <i class="fas fa-star text-yellow-400 animate-pulse text-lg"></i>
+                <span>TOPIK I <span class="text-sm font-bold text-purple-400">Study Room ♡</span></span>
+            </h1>
+            <div class="text-xs font-bold text-purple-400 bg-purple-50 px-3 py-1 rounded-full border border-purple-100">
+                <i class="fas fa-heart text-pink-400 mr-1"></i> Japanese Ver.
+            </div>
+        </div>
+        
+        <!-- Tabs -->
+        <div class="max-w-5xl mx-auto px-4 mt-2 flex gap-4 sm:gap-8 text-sm sm:text-base font-bold border-b border-purple-100 justify-center overflow-x-auto">
+            <button onclick="switchTab('grammar')" id="tab-grammar" class="tab-active pb-3 px-4 transition-all hover:text-fuchsia-400 whitespace-nowrap">
+                <i class="fas fa-book-sparkles mr-1"></i> 文法 (Grammar)
+            </button>
+            <button onclick="switchTab('vocab')" id="tab-vocab" class="pb-3 px-4 text-gray-400 hover:text-fuchsia-400 transition-all whitespace-nowrap">
+                <i class="fas fa-language mr-1"></i> 単語 (Vocab)
+            </button>
+            <button onclick="switchTab('practice')" id="tab-practice" class="pb-3 px-4 text-gray-400 hover:text-fuchsia-400 transition-all whitespace-nowrap">
+                <i class="fas fa-pencil-alt mr-1"></i> 実戦クイズ (Quiz)
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow max-w-5xl mx-auto px-4 py-8 w-full">
+        
+        <!-- Grammar Section -->
+        <div id="view-grammar" class="space-y-6">
+            <!-- Search Bar -->
+            <div class="glass-panel p-4 rounded-2xl shadow-sm ring-4 ring-purple-50 flex justify-between items-center gap-4">
+                <div class="relative w-full">
+                    <i class="fas fa-search absolute left-4 top-3.5 text-purple-300"></i>
+                    <input type="text" id="grammar-search" placeholder="文法を検索してね♡ (例: 싶다, 否定)..." 
+                           class="w-full pl-12 pr-4 py-3 bg-white border-2 border-purple-100 rounded-xl focus:outline-none focus:border-pink-400 focus:ring-2 focus:ring-pink-200 text-gray-600 transition-all placeholder-purple-200">
+                </div>
+                <div class="text-right text-xs text-purple-400 font-bold whitespace-nowrap">
+                    <span id="grammar-count">0</span> Items
+                </div>
+            </div>
+
+            <!-- Table Container -->
+            <div class="glass-panel rounded-3xl shadow-sm overflow-hidden border border-purple-100">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-gradient-to-r from-purple-100 to-pink-100 text-purple-600 border-b border-purple-200">
+                                <th class="px-5 py-4 font-bold text-sm whitespace-nowrap w-16">No.</th>
+                                <th class="px-5 py-4 font-bold text-sm w-1/4 min-w-[150px]">文法 (Grammar)</th>
+                                <th class="px-5 py-4 font-bold text-sm w-1/4 min-w-[150px]">意味 (Meaning)</th>
+                                <th class="px-5 py-4 font-bold text-sm min-w-[250px]">例文 (Example)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="grammar-table-body" class="text-sm divide-y divide-purple-50">
+                            <!-- Grammar rows will be inserted here by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Vocabulary Section -->
+        <div id="view-vocab" class="hidden space-y-6">
+            <!-- Search Bar -->
+            <div class="glass-panel p-4 rounded-2xl shadow-sm ring-4 ring-purple-50 flex justify-between items-center gap-4">
+                <div class="relative w-full">
+                    <i class="fas fa-search absolute left-4 top-3.5 text-purple-300"></i>
+                    <input type="text" id="vocab-search" placeholder="単語を検索 (例: 가게, 가다)..." 
+                           class="w-full pl-12 pr-4 py-3 bg-white border-2 border-purple-100 rounded-xl focus:outline-none focus:border-pink-400 focus:ring-2 focus:ring-pink-200 text-gray-600 transition-all placeholder-purple-200">
+                </div>
+                <div class="text-right text-xs text-purple-400 font-bold whitespace-nowrap">
+                    <span id="vocab-count">0</span> Words
+                </div>
+            </div>
+
+            <!-- Vocab Grid -->
+            <div id="vocab-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- Vocab cards inserted by JS -->
+            </div>
+            
+            <div class="text-center mt-6">
+                 <button onclick="alert('全単語を表示中♡')" class="px-6 py-2 bg-purple-100 text-purple-500 rounded-full text-sm font-bold hover:bg-purple-200 transition">
+                    Show All
+                </button>
+            </div>
+        </div>
+
+        <!-- Practice Section -->
+        <div id="view-practice" class="hidden space-y-8">
+            
+            <div class="bg-gradient-to-r from-purple-100 to-pink-100 rounded-2xl p-6 shadow-sm border border-purple-200 text-center relative overflow-hidden">
+                <div class="absolute top-0 right-0 -mt-2 -mr-2 text-6xl text-white opacity-20 transform rotate-12">
+                    <i class="fas fa-graduation-cap"></i>
+                </div>
+                <h2 class="text-purple-700 font-bold text-lg mb-2">Let's Study! ✨</h2>
+                <p class="text-purple-600 text-sm">現在、全<span id="quiz-total-count" class="font-bold">0</span>問が登録されています。</p>
+            </div>
+
+            <div id="quiz-container" class="space-y-6">
+                <!-- Questions will be inserted here by JS -->
+            </div>
+            
+            <button onclick="renderQuestions()" class="w-full py-4 bg-white border-2 border-purple-200 text-purple-500 rounded-2xl font-bold hover:bg-purple-50 hover:border-purple-300 transition shadow-sm">
+                <i class="fas fa-rotate-right mr-2"></i> 問題をリフレッシュ (Shuffle & Refresh)
+            </button>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="mt-8 py-8 text-center">
+        <div class="inline-block px-6 py-2 rounded-full bg-white/50 border border-purple-100 text-purple-400 text-xs font-bold">
+            TOPIK I Preparation App
+        </div>
+    </footer>
+
+    <script>
+        // --- Data: 85 Grammar Points ---
+        const grammarData = [
+            { id: 1, kr: "-까지", jp: "～まで", ex_kr: "강남까지 가는데 시간이 어느 정도예요?", ex_jp: "江南まで行くのに時間がどれくらいですか？" },
+            { id: 2, kr: "-께", jp: "～に（丁寧語）", ex_kr: "부모님께 드리고 싶은 선물이 있어요.", ex_jp: "両親に差し上げたいお土産があります。" },
+            { id: 3, kr: "-께서", jp: "～が（丁寧語）", ex_kr: "할머니께서 사과를 사오라고 하셨어요.", ex_jp: "おばあさんがリンゴを買ってきてといいました。" },
+            { id: 4, kr: "-(이)나", jp: "～でも", ex_kr: "밥이나 먹으러 가고 싶어요.", ex_jp: "ご飯でも食べに行きたいです。" },
+            { id: 5, kr: "-(이)나", jp: "～か", ex_kr: "교환이나 환불 원하시면 연락주세요.", ex_jp: "交換か返金をご希望されるならご連絡ください。" },
+            { id: 6, kr: "-(이)나", jp: "～も（数量）", ex_kr: "쇼핑하는데 열시간이나 걸렸어요.", ex_jp: "ショッピングするのに10時間もかかりました。" },
+            { id: 7, kr: "-(이)랑", jp: "～と", ex_kr: "친구랑 같이 왔어요.", ex_jp: "友達と一緒に来ました。" },
+            { id: 8, kr: "-도", jp: "～も", ex_kr: "내일도 오늘도 날씨가 좋아요.", ex_jp: "明日も今日も天気が良いです。" },
+            { id: 9, kr: "-마다", jp: "～ごと、～たびに", ex_kr: "한국에 올 때마다 이 가게를 찾아요.", ex_jp: "韓国に来るたびに、この店に来ます。" },
+            { id: 10, kr: "-만", jp: "～だけ", ex_kr: "지금 5000원만 있어요.", ex_jp: "今、5000ウォンだけあります。" },
+            { id: 11, kr: "-밖에", jp: "～しか（＋否定）", ex_kr: "시간이 한시간밖에 없어요.", ex_jp: "時間が一時間しかありません。" },
+            { id: 12, kr: "-보다", jp: "～より", ex_kr: "이것보다 이게 더 어울려요.", ex_jp: "これよりも、こっちがもっと似合います。" },
+            { id: 13, kr: "-부터", jp: "～から（時間・順序）", ex_kr: "지하철은 아침 5시부터 운영합니다.", ex_jp: "地下鉄は朝の5時から運営します。" },
+            { id: 14, kr: "-에", jp: "～に（場所・時間）", ex_kr: "남대문 시장에 가고 싶어요.", ex_jp: "南大門市場に行きたいです。" },
+            { id: 15, kr: "-에게", jp: "～に（人・動物）", ex_kr: "손님에게 특별히 드립니다.", ex_jp: "お客様に特別に差し上げます。" },
+            { id: 16, kr: "-에게서", jp: "～から（人）", ex_kr: "호텔 직원에게서 받았습니다.", ex_jp: "ホテルの職員からもらいました。" },
+            { id: 17, kr: "-에서", jp: "～から（場所）、～で", ex_kr: "공항에서 지하철 타고 왔어요.", ex_jp: "空港から地下鉄に乗ってきました。" },
+            { id: 18, kr: "-와/과", jp: "～と", ex_kr: "본래 가격과 달라요.", ex_jp: "本来の価格と違います。" },
+            { id: 19, kr: "-(으)로", jp: "～へ、～に（方向）", ex_kr: "저는 서울로 가요.", ex_jp: "私はソウルに行きます。" },
+            { id: 20, kr: "-은/는", jp: "～は（主題）", ex_kr: "저는 일본사람이에요.", ex_jp: "私は日本人です。" },
+            { id: 21, kr: "-을/를", jp: "～を", ex_kr: "택시를 불러주세요.", ex_jp: "タクシーを呼んでください。" },
+            { id: 22, kr: "-의", jp: "～の", ex_kr: "한국의 화장품은 특별해요.", ex_jp: "韓国の化粧品は特別です。" },
+            { id: 23, kr: "-이/가", jp: "～が", ex_kr: "오늘은 날씨가 맑을 거예요.", ex_jp: "今日は天気がいいでしょう。" },
+            { id: 24, kr: "-이/가 아니다", jp: "～ではない", ex_kr: "제 물건이 아닙니다.", ex_jp: "私の物ではありません。" },
+            { id: 25, kr: "-처럼", jp: "～のように", ex_kr: "배우처럼 생기셨네요.", ex_jp: "俳優のように見えますね。" },
+            { id: 26, kr: "-하고", jp: "～と", ex_kr: "양념 치킨하고 맥주 주세요.", ex_jp: "ヤンニョムチキンとビールください。" },
+            { id: 27, kr: "-한테", jp: "～に（話し言葉）", ex_kr: "백화점 안내원한테 물어보세요.", ex_jp: "デパートの案内係に聞いてみてください。" },
+            { id: 28, kr: "-한테서", jp: "～から（話し言葉）", ex_kr: "이거는 어머니한테서 선물로 받은 거예요.", ex_jp: "これは母からプレゼントとしてもらいました。" },
+            { id: 29, kr: "-(으)ㄴ 것 같다", jp: "～したみたい／気がする", ex_kr: "택시 비용이 좀 비싼 것 같아요.", ex_jp: "タクシーの費用がちょっと高い気がします。" },
+            { id: 30, kr: "-(으)ㄹ 것 같다", jp: "～するみたい（推測）", ex_kr: "이 화장품은 한국에서 인기가 많을 것 같아요.", ex_jp: "この化粧品は韓国で人気が高いみたいです。" },
+            { id: 31, kr: "-(으)ㄴ 적이 없다", jp: "～したことがない", ex_kr: "저는 한국에 가본 적이 없어요.", ex_jp: "私は韓国に行ったことがありません。" },
+            { id: 32, kr: "-(으)ㄴ 적이 있다", jp: "～したことがある", ex_kr: "이 가게에 와본 적이 있어요.", ex_jp: "この店に来たことがあります。" },
+            { id: 33, kr: "-(으)ㄴ 지", jp: "～てから（期間）", ex_kr: "이 가게가 생긴지 얼마나 됐어요?", ex_jp: "この店ができてから、どれくらいになりました？" },
+            { id: 34, kr: "-(으)ㄴ 지", jp: "～て（経過）", ex_kr: "한국에 온지 3일이 지났습니다.", ex_jp: "韓国に来て、3日が経ちました。" },
+            { id: 35, kr: "-(으)ㄴ 후에", jp: "～した後に", ex_kr: "쇼핑한 후에 밥 먹었습니다.", ex_jp: "ショッピングした後にご飯を食べました。" },
+            { id: 36, kr: "-(으)ㄴ데(요)", jp: "～けど、～ですが", ex_kr: "역에서 좀 먼데요.", ex_jp: "駅からちょっと遠いんですけど。" },
+            { id: 37, kr: "-(으)ㄴ데(요)", jp: "～ですが（前置き）", ex_kr: "저, 죄송한데요, 길 좀 알려줄 수 있어요?", ex_jp: "あの、すみませんが、道をちょっと教えていただけませんか？" },
+            { id: 38, kr: "-(으)니까", jp: "～だから（理由）", ex_kr: "일본 돈밖에 없으니까 환전해야돼요.", ex_jp: "日本のお金しかないから、換金しなければいけません。" },
+            { id: 39, kr: "-(으)ㄹ 것이다", jp: "～するだろう（推測）", ex_kr: "여기 식당은 맛있을 거예요.", ex_jp: "ここの食堂は美味しいでしょう。" },
+            { id: 40, kr: "-(으)ㄹ 때", jp: "～する時", ex_kr: "내가 버스타고 있었을 때 잃어버렸어요.", ex_jp: "私がバスに乗っていた時になくしてしまいました。" },
+            { id: 41, kr: "-(으)ㄹ 수 없다", jp: "～できない", ex_kr: "여기서는 사진을 찍을 수 없습니다.", ex_jp: "ここでは写真を撮ることができません。" },
+            { id: 42, kr: "-(으)ㄹ 수 있다", jp: "～できる", ex_kr: "저는 한국말 조금 할 수 있어요.", ex_jp: "私は韓国語が少しできます。" },
+            { id: 43, kr: "-(으)ㄹ게요", jp: "～しますよ（約束・意志）", ex_kr: "제가 전화할게요.", ex_jp: "私が電話しますよ。" },
+            { id: 44, kr: "-(으)ㄹ까 하다", jp: "～しようと思う", ex_kr: "명동에 갈까 해요.", ex_jp: "明洞(ミョンドン)に行こうと思っています。" },
+            { id: 45, kr: "-(으)ㄹ까봐", jp: "～するかと思って（心配）", ex_kr: "여행가는데 현금이 모자랄까봐 걱정했어요.", ex_jp: "旅行に行くのに現金が足りないかと思って心配しました。" },
+            { id: 46, kr: "-(으)ㄹ까요?", jp: "～しましょうか？（提案）", ex_kr: "여기서 걸어갈까요?", ex_jp: "ここから歩いて行きましょうか？" },
+            { id: 47, kr: "-(으)ㄹ까요?", jp: "～でしょうか？（推測質問）", ex_kr: "요금은 이걸로 괜찮을까요?", ex_jp: "料金はこれで大丈夫でしょうか？" },
+            { id: 48, kr: "-(으)ㄹ래요", jp: "～します（意志）", ex_kr: "저는 이걸로 할래요.", ex_jp: "私はこれにします。" },
+            { id: 49, kr: "-(으)ㄹ래요?", jp: "～しますか？（勧誘）", ex_kr: "이걸로 계산하실래요?", ex_jp: "これで計算いたしましょうか？" },
+            { id: 50, kr: "-(으)러 가다", jp: "～しに行く", ex_kr: "한국에 놀러 갈거예요.", ex_jp: "韓国に遊びに行こうと思っています。" },
+            { id: 51, kr: "-(으)러 오다", jp: "～しに来る", ex_kr: "여기에 예약하러 왔어요.", ex_jp: "ここに予約しに来ました。" },
+            { id: 52, kr: "-(으)려고", jp: "～しようと（目的）", ex_kr: "하시는 말을 이해하려고 노력하고 있어요.", ex_jp: "仰っている言葉を理解しようと努力しています。" },
+            { id: 53, kr: "-(으)려고 하다", jp: "～しようと思う", ex_kr: "찜질방에 들어가려고 합니다.", ex_jp: "チムチルバンに入ろうと思います。" },
+            { id: 54, kr: "-(으)려고요", jp: "～するつもりです", ex_kr: "지금부터 아이돌 콘서트에 가려고요.", ex_jp: "今から、アイドルのコンサートに行く予定です。" },
+            { id: 55, kr: "-(으)면", jp: "～なら（仮定）", ex_kr: "코엑스에 가면 뭘 볼 수 있을까요?", ex_jp: "コエックスに行ったら何を見れますか？" },
+            { id: 56, kr: "-(으)면서", jp: "～しながら", ex_kr: "핸드폰을 보면서 걷지 마세요.", ex_jp: "携帯を見ながら歩かないでください。" },
+            { id: 57, kr: "-(으)ㅂ시다", jp: "～しましょう", ex_kr: "순두부를 주문해봅시다.", ex_jp: "スンドゥブを注文してみましょう。" },
+            { id: 58, kr: "-(으)세요", jp: "～してください", ex_kr: "삼겹살 2인분 주세요.", ex_jp: "サムギョプサルを二人前ください。" },
+            { id: 59, kr: "-(으)십시오", jp: "～してください（丁寧）", ex_kr: "일본에도 놀러 오십시오.", ex_jp: "日本にも遊びに来てください。" },
+            { id: 60, kr: "-(이)지요?", jp: "～ですよね？", ex_kr: "카드로 계산 되지요?", ex_jp: "カードで支払えますよね？" },
+            { id: 61, kr: "-거나", jp: "～したり、～か", ex_kr: "시장에 가거나 카페에 가고 싶어요.", ex_jp: "市場に行ったり、カフェに行きたいです。" },
+            { id: 62, kr: "-게", jp: "～く（副詞化）", ex_kr: "싸게 해주세요.", ex_jp: "安くしてください。" },
+            { id: 63, kr: "-게 되다", jp: "～になる（変化）", ex_kr: "한국말 공부하다보니 한국에 오게 됐어요.", ex_jp: "韓国語を勉強してたら、韓国に来るようになりました。" },
+            { id: 64, kr: "-고", jp: "～して（並列・順序）", ex_kr: "여기서 내리고 길을 건너세요.", ex_jp: "ここで降りて道を渡ってください。" },
+            { id: 65, kr: "-고 싶다", jp: "～したい（希望）", ex_kr: "저는 서울역 주변의 약국에 가고 싶어요.", ex_jp: "私はソウル駅周辺の薬局に行きたいです。" },
+            { id: 66, kr: "-고 있다", jp: "～している（進行）", ex_kr: "지금 무슨말 할까 생각하고 있어요.", ex_jp: "今、なんて言おうか考えています。" },
+            { id: 67, kr: "-군요", jp: "～ですね（感嘆）", ex_kr: "병원에 가려면 여기 쭉 가면 되는군요.", ex_jp: "病院に行こうとしたらここをまっすぐ行けばいいのですね。" },
+            { id: 68, kr: "-기 때문에", jp: "～のために、～のせいで", ex_kr: "너무 많이 걸었기 때문에 다리가 피곤해요.", ex_jp: "とても沢山歩いたせいで、足が疲れています。" },
+            { id: 69, kr: "-기 전에", jp: "～の前に", ex_kr: "결제하기 전에 확인하고 싶은게 있는데요.", ex_jp: "支払いの前に確認したいことがあるのですが。" },
+            { id: 70, kr: "-기로 하다", jp: "～することにする（決定）", ex_kr: "제가 여행중이라 조금만 마시기로 했어요.", ex_jp: "私が旅行中なので、少しだけ飲むことにしました。" },
+            { id: 71, kr: "-네요", jp: "～ですね", ex_kr: "그럼 다 합쳐서 4000원이네요?", ex_jp: "そしたら、すべて合わせて4000ウォンですね？" },
+            { id: 72, kr: "-는 게 좋겠다", jp: "～するのがよい", ex_kr: "시간이 없으니까 빨리 가는 게 좋겠어요.", ex_jp: "時間がないので、急いで行った方がいいですよ。" },
+            { id: 73, kr: "-는데", jp: "～のに（背景）", ex_kr: "입국심사하는데 별로 많이 안 기다렸어요.", ex_jp: "入国審査するのに、あまり待ちませんでした。" },
+            { id: 74, kr: "-ㅂ/습니까?", jp: "～ですか？（格式体）", ex_kr: "언제 한국에 갑니까?", ex_jp: "いつ韓国に行きますか？" },
+            { id: 75, kr: "-ㅂ/습니다", jp: "～です（格式体）", ex_kr: "내일 한국에 갑니다.", ex_jp: "明日、韓国に行きます。" },
+            { id: 76, kr: "-아/어/여 보다", jp: "～してみる", ex_kr: "이것도 시식해보세요.", ex_jp: "これも試食してみてください。" },
+            { id: 77, kr: "-아/어/여 주다", jp: "～してくれる／あげる", ex_kr: "알려줘서 고맙습니다.", ex_jp: "教えてくださり、有難うございます。" },
+            { id: 78, kr: "-아/어/여야 되다", jp: "～しなければならない", ex_kr: "봉투는 따로 구매하셔야 됩니다.", ex_jp: "袋は別途に購入しなければなりません。" },
+            { id: 79, kr: "-아/어/여야 하다", jp: "～しなければならない", ex_kr: "차타고 가야 합니다.", ex_jp: "車に乗っていかなければなりません。" },
+            { id: 80, kr: "-아/어/여", jp: "～です、ます（丁寧語）", ex_kr: "좋아요.", ex_jp: "良いです。" },
+            { id: 81, kr: "-았/었/였으면 좋겠다", jp: "～したらいい／だといい", ex_kr: "빨리 배달 왔으면 좋겠는데.", ex_jp: "早く配達が来たらいいのに。" },
+            { id: 82, kr: "-지 말다", jp: "～しない、～やめる", ex_kr: "담배피우지 마세요.", ex_jp: "タバコ吸わないでください。" },
+            { id: 83, kr: "-지 못하다", jp: "～できない（不可能）", ex_kr: "도와주지 못해서 죄송합니다.", ex_jp: "お役に立てれずにすみません。" },
+            { id: 84, kr: "-지 않다", jp: "～しない（否定）", ex_kr: "지하철 타지 않고 걸어갈게요.", ex_jp: "地下鉄に乗らないで、歩いていきますね。" },
+            { id: 85, kr: "-지만", jp: "～だが、～けど（逆接）", ex_kr: "오래 전에 주문했지만 요리가 아직 안 왔어요.", ex_jp: "ずっと前に注文したのですが、料理がまだ来てません。" }
+        ];
+
+        // --- Data: 60 Vocabulary Words (Sample) ---
+        const vocabData = [
+            { id: 1, word: "가게", mean: "店", ex_kr: "이 가게는 싸요.", ex_jp: "この店は安いです。" },
+            { id: 2, word: "가격", mean: "価格", ex_kr: "가격이 비싸요.", ex_jp: "価格が高いです。" },
+            { id: 3, word: "가구", mean: "家具", ex_kr: "가구를 샀어요.", ex_jp: "家具を買いました。" },
+            { id: 4, word: "가깝다", mean: "近い", ex_kr: "집이 학교에서 가까워요.", ex_jp: "家が学校から近いです。" },
+            { id: 5, word: "가끔", mean: "時々", ex_kr: "가끔 영화를 봐요.", ex_jp: "時々映画を見ます。" },
+            { id: 6, word: "가다", mean: "行く", ex_kr: "학교에 가요.", ex_jp: "学校へ行きます。" },
+            { id: 7, word: "가르치다", mean: "教える", ex_kr: "한국어를 가르쳐요.", ex_jp: "韓国語を教えます。" },
+            { id: 8, word: "가방", mean: "鞄", ex_kr: "가방을 샀어요.", ex_jp: "鞄を買いました。" },
+            { id: 9, word: "가볍다", mean: "軽い", ex_kr: "이 가방은 가벼워요.", ex_jp: "この鞄は軽いです。" },
+            { id: 10, word: "가수", mean: "歌手", ex_kr: "가수가 되고 싶어요.", ex_jp: "歌手になりたいです。" },
+            { id: 11, word: "가슴", mean: "胸", ex_kr: "가슴이 아파요.", ex_jp: "胸が痛いです。" },
+            { id: 12, word: "가요", mean: "歌謡", ex_kr: "가요를 들어요.", ex_jp: "歌謡曲を聴きます。" },
+            { id: 13, word: "가운데", mean: "間、中間", ex_kr: "방 가운데에 책상이 있어요.", ex_jp: "部屋の真ん中に机があります。" },
+            { id: 14, word: "가위", mean: "はさみ", ex_kr: "가위로 종이를 잘라요.", ex_jp: "はさみで紙を切ります。" },
+            { id: 15, word: "가을", mean: "秋", ex_kr: "가을은 시원해요.", ex_jp: "秋は涼しいです。" },
+            { id: 16, word: "가장", mean: "最も、一番", ex_kr: "가장 좋아하는 음식은 뭐예요?", ex_jp: "一番好きな食べ物は何ですか？" },
+            { id: 17, word: "가져가다", mean: "持って行く", ex_kr: "우산을 가져가세요.", ex_jp: "傘を持って行ってください。" },
+            { id: 18, word: "가져오다", mean: "持って来る", ex_kr: "숙제를 가져왔어요.", ex_jp: "宿題を持って来ました。" },
+            { id: 19, word: "가족", mean: "家族", ex_kr: "가족이 몇 명이에요?", ex_jp: "家族は何人ですか？" },
+            { id: 20, word: "가지", mean: "種類", ex_kr: "세 가지 색깔이 있어요.", ex_jp: "三種類の色があります。" },
+            { id: 21, word: "가지다", mean: "持つ", ex_kr: "돈을 가지고 있어요.", ex_jp: "お金を持っています。" },
+            { id: 22, word: "각", mean: "各、おのおの", ex_kr: "각 방에 에어컨이 있어요.", ex_jp: "各部屋にエアコンがあります。" },
+            { id: 23, word: "간", mean: "間", ex_kr: "이틀 간 여행을 갔어요.", ex_jp: "二日間旅行に行きました。" },
+            { id: 24, word: "간단하다", mean: "簡単だ", ex_kr: "이 문제는 간단해요.", ex_jp: "この問題は簡単です。" },
+            { id: 25, word: "간단히", mean: "簡単に", ex_kr: "간단히 설명해 주세요.", ex_jp: "簡単に説明してください。" },
+            { id: 26, word: "간식", mean: "間食、おやつ", ex_kr: "간식을 먹어요.", ex_jp: "おやつを食べます。" },
+            { id: 27, word: "간장", mean: "醤油", ex_kr: "간장을 찍어 드세요.", ex_jp: "醤油をつけて召し上がってください。" },
+            { id: 28, word: "간호사", mean: "看護士", ex_kr: "언니는 간호사예요.", ex_jp: "姉は看護師です。" },
+            { id: 29, word: "갈비", mean: "カルビ", ex_kr: "갈비를 먹고 싶어요.", ex_jp: "カルビを食べたいです。" },
+            { id: 30, word: "갈비탕", mean: "カルビタン", ex_kr: "점심에 갈비탕을 먹었어요.", ex_jp: "昼食にカルビタンを食べました。" },
+            { id: 31, word: "갈색", mean: "褐色、茶色", ex_kr: "갈색 구두를 샀어요.", ex_jp: "茶色の靴を買いました。" },
+            { id: 32, word: "갈아타다", mean: "乗り換える", ex_kr: "시청역에서 갈아타세요.", ex_jp: "市庁駅で乗り換えてください。" },
+            { id: 33, word: "감", mean: "柿", ex_kr: "감이 맛있어요.", ex_jp: "柿が美味しいです。" },
+            { id: 34, word: "감기", mean: "風邪", ex_kr: "감기에 걸렸어요.", ex_jp: "風邪をひきました。" },
+            { id: 35, word: "감기약", mean: "風邪薬", ex_kr: "감기약을 드세요.", ex_jp: "風邪薬を飲んでください。" },
+            { id: 36, word: "감다", mean: "（目を）閉じる", ex_kr: "눈을 감으세요.", ex_jp: "目を閉じてください。" },
+            { id: 37, word: "감동", mean: "感動", ex_kr: "영화가 감동적이었어요.", ex_jp: "映画が感動的でした。" },
+            { id: 38, word: "감동하다", mean: "感動する", ex_kr: "그 이야기에 감동했어요.", ex_jp: "その話に感動しました。" },
+            { id: 39, word: "감사", mean: "感謝", ex_kr: "감사의 마음을 전해요.", ex_jp: "感謝の気持ちを伝えます。" },
+            { id: 40, word: "감사드립니다", mean: "ありがとうございます", ex_kr: "진심으로 감사드립니다.", ex_jp: "心から感謝申し上げます。" },
+            { id: 41, word: "감사하다", mean: "感謝する", ex_kr: "도와주셔서 감사합니다.", ex_jp: "助けてくださり感謝します。" },
+            { id: 42, word: "감사합니다", mean: "ありがとうございます", ex_kr: "선물 감사합니다.", ex_jp: "プレゼントありがとうございます。" },
+            { id: 43, word: "감자", mean: "じゃがいも", ex_kr: "감자를 쪄요.", ex_jp: "じゃがいもを蒸します。" },
+            { id: 44, word: "감자탕", mean: "カムジャタン", ex_kr: "감자탕은 매워요.", ex_jp: "カムジャタンは辛いです。" },
+            { id: 45, word: "갑자기", mean: "急に", ex_kr: "갑자기 비가 와요.", ex_jp: "急に雨が降ります。" },
+            { id: 46, word: "값", mean: "値段", ex_kr: "값이 싸요.", ex_jp: "値段が安いです。" },
+            { id: 47, word: "강", mean: "川", ex_kr: "한강은 서울에 있어요.", ex_jp: "漢江はソウルにあります。" },
+            { id: 48, word: "강아지", mean: "子犬", ex_kr: "강아지가 귀여워요.", ex_jp: "子犬が可愛いです。" },
+            { id: 49, word: "강좌", mean: "講座", ex_kr: "요리 강좌를 들어요.", ex_jp: "料理講座を聞きます。" },
+            { id: 50, word: "갖다", mean: "持つ", ex_kr: "관심을 갖고 있어요.", ex_jp: "関心を持っています。" },
+            { id: 51, word: "같다", mean: "同じだ", ex_kr: "우리는 나이가 같아요.", ex_jp: "私たちは歳が同じです。" },
+            { id: 52, word: "같이", mean: "一緒に", ex_kr: "같이 밥 먹어요.", ex_jp: "一緒にご飯を食べましょう。" },
+            { id: 53, word: "개", mean: "～個、犬", ex_kr: "사과 한 개 주세요.", ex_jp: "リンゴ一つください。" },
+            { id: 54, word: "개나리", mean: "レンギョウ", ex_kr: "봄에는 개나리가 피어요.", ex_jp: "春にはレンギョウが咲きます。" },
+            { id: 55, word: "개인", mean: "個人", ex_kr: "개인 사정이 있어요.", ex_jp: "個人の事情があります。" },
+            { id: 56, word: "거기", mean: "そこ", ex_kr: "거기에 무엇이 있어요?", ex_jp: "そこに何がありますか？" },
+            { id: 57, word: "거리", mean: "通り、街", ex_kr: "거리가 깨끗해요.", ex_jp: "通りがきれいです。" },
+            { id: 58, word: "거실", mean: "居室、居間", ex_kr: "거실에서 텔레비전을 봐요.", ex_jp: "リビングでテレビを見ます。" },
+            { id: 59, word: "거울", mean: "鏡", ex_kr: "거울을 보세요.", ex_jp: "鏡を見てください。" },
+            { id: 60, word: "거의", mean: "ほとんど", ex_kr: "숙제를 거의 다 했어요.", ex_jp: "宿題をほとんどやり終えました。" }
+        ];
+
+        // --- Data: 100 Questions ---
+        const questionsData = [
+            // Level 1: Particles (1-10)
+            { id: 1, level: "1級", type: "助詞", question: "저는 학생(   ) 입니다.", options: ["은", "는", "이", "가"], correct: 1, explanation: "パッチムがない名詞「저(私)」には主題を表す助詞「는」が付きます。" },
+            { id: 2, level: "1級", type: "助詞", question: "도서관(   ) 공부를 해요.", options: ["에", "에서", "부터", "까지"], correct: 1, explanation: "動作が行われる場所を示す場合は「에서(で)」を使います。「에」は目的地や存在場所。" },
+            { id: 3, level: "1級", type: "助詞", question: "친구(   ) 만나요.", options: ["가", "를", "의", "도"], correct: 1, explanation: "「友達『を』会います（会う対象）」なので目的格助詞「를」が正解です。" },
+            { id: 4, level: "1級", type: "助詞", question: "이것은 제 책(   ) 아닙니다.", options: ["이", "가", "은", "을"], correct: 0, explanation: "否定形「아니다(ではない)」の前には助詞「이/가」が必要です。「책」はパッチムがあるので「이」です。" },
+            { id: 5, level: "1級", type: "助詞", question: "사과(   ) 오렌지를 샀어요.", options: ["하고", "부터", "만", "이나"], correct: 0, explanation: "「リンゴ『と』オレンジ」と並列する意味なので「하고」が適切です。" },
+            { id: 6, level: "1級", type: "助詞", question: "지금 12시(   ).", options: ["입니다", "이었습니다", "아닙니다", "있습니다"], correct: 0, explanation: "「今は12時『です』」という肯定文なので「입니다」が正解です。" },
+            { id: 7, level: "1級", type: "助詞", question: "동생은 키(   ) 커요.", options: ["가", "를", "의", "도"], correct: 0, explanation: "形容詞「크다(大きい)」の主語となる部分には「가」を使います。「背『が』高い」。" },
+            { id: 8, level: "1級", type: "助詞", question: "어디(   ) 가요?", options: ["에", "에서", "하고", "부터"], correct: 0, explanation: "目的地（どこ）に向かうかを聞くので「에」を使います。" },
+            { id: 9, level: "1級", type: "助詞", question: "저는 일본(   ) 왔어요.", options: ["에", "에서", "부터", "까지"], correct: 1, explanation: "出身や出発点を表す「～から来ました」は「에서 왔어요」を使います。" },
+            { id: 10, level: "1級", type: "助詞", question: "물(   ) 주세요.", options: ["좀", "을", "를", "가"], correct: 0, explanation: "「水を『ちょっと』ください」という依頼文脈で「좀」が自然ですが、文法的には助詞を求めている場合「물을」となります。ここでは選択肢の構成上、口語でよく使う「좀(少し)」が副詞として入るのが最も自然な会話です。" },
+
+            // Level 1: Vocabulary & Verbs (11-20)
+            { id: 11, level: "1級", type: "語彙", question: "가: 무엇을 마셔요?\n나: (   )을 마셔요.", options: ["빵", "사과", "물", "가방"], correct: 2, explanation: "「飲む(마시다)」の目的語になるのは飲み物である「물(水)」だけです。" },
+            { id: 12, level: "1級", type: "語彙", question: "가: 직업이 뭐예요?\n나: 저는 (   )입니다.", options: ["학생", "학교", "교실", "책상"], correct: 0, explanation: "職業を聞かれているので、人である「학생(学生)」が正解です。" },
+            { id: 13, level: "1級", type: "動詞", question: "어제 공원에서 (   ).", options: ["운동해요", "운동했어요", "운동할 거예요", "운동하세요"], correct: 1, explanation: "「昨日(어제)」のことなので過去形「운동했어요」が正解です。" },
+            { id: 14, level: "1級", type: "動詞", question: "내일 친구를 (   ).", options: ["만났어요", "만나요", "만나세요", "만납니다"], correct: 1, explanation: "「明日(내일)」のことなので、現在形（未来の予定）または未来形を使います。「만나요」は近い未来を表せます。" },
+            { id: 15, level: "1級", type: "形容詞", question: "날씨가 아주 (   ).", options: ["좋아요", "좋아해요", "먹어요", "가요"], correct: 0, explanation: "天気が「良い(좋다)」が適切です。「좋아하다」は「（何かを）好む」という意味の動詞です。" },
+            { id: 16, level: "1級", type: "語彙", question: "가: (   )이/가 언제예요?\n나: 5월 5일이에요.", options: ["이름", "생일", "나라", "직업"], correct: 1, explanation: "日付（5月5日）を答えているので「誕生日(생일)」を聞くのが適切です。" },
+            { id: 17, level: "1級", type: "語彙", question: "서점에 가서 (   )을 샀어요.", options: ["옷", "책", "신발", "과일"], correct: 1, explanation: "「書店(서점)」で買うものは「本(책)」です。" },
+            { id: 18, level: "1級", type: "語彙", question: "머리가 (   ) 약을 먹었어요.", options: ["좋아서", "나빠서", "아파서", "비싸서"], correct: 2, explanation: "薬を飲む理由は「痛いから(아파서)」です。" },
+            { id: 19, level: "1級", type: "動詞", question: "음악을 (   ).", options: ["봐요", "들어요", "먹어요", "입어요"], correct: 1, explanation: "音楽は「聴く(듣다 -> 들어요)」ものです。" },
+            { id: 20, level: "1級", type: "語彙", question: "가: 저 사람은 누구예요?\n나: 제 (   )예요.", options: ["어머니", "안경", "시계", "구두"], correct: 0, explanation: "「誰(누구)」と人を聞いているので「母(어머니)」が正解です。" },
+
+            // Level 1: Numbers & Dates (21-25)
+            { id: 21, level: "1級", type: "数字", question: "사과가 (   )개 있습니다.", options: ["두", "이", "둘", "두째"], correct: 0, explanation: "助数詞「개(個)」の前では固有数詞「둘」が「두」に変化します。" },
+            { id: 22, level: "1級", type: "数字", question: "지금은 (   )시입니다.", options: ["세", "삼", "셋", "석"], correct: 0, explanation: "「時」の前では固有数詞「셋」が「세」に変化します。「세 시(3時)」。" },
+            { id: 23, level: "1級", type: "数字", question: "30분을 한국어로 어떻게 말합니까?", options: ["삼십분", "서른분", "세십분", "삼공분"], correct: 0, explanation: "「分」は漢数詞で数えるので「삼십(30)분」です。" },
+            { id: 24, level: "1級", type: "日付", question: "오늘은 1월 1일, (   )입니다.", options: ["크리스마스", "설날", "어린이날", "생일"], correct: 1, explanation: "1月1日は「元旦(설날/신정)」です。" },
+            { id: 25, level: "1級", type: "曜日", question: "월, 화, 수, 목, (   ), 토, 일", options: ["금", "공", "감", "곰"], correct: 0, explanation: "木曜日の次は「金(금)」曜日です。" },
+
+            // Level 1: Basic Grammar (26-40)
+            { id: 26, level: "1級", type: "文法", question: "한국에 (   ) 싶어요.", options: ["가고", "가러", "가서", "가면"], correct: 0, explanation: "希望を表す文法は「-고 싶다」です。" },
+            { id: 27, level: "1級", type: "文法", question: "비가 (   ) 우산을 씁니다.", options: ["오고", "오면", "와서", "오지만"], correct: 2, explanation: "「雨が降って(理由)、傘をさします」なので「-아서/어서(理由)」の「와서」が適切です。" },
+            { id: 28, level: "1級", type: "文法", question: "지금 밥을 (   ) 않습니다.", options: ["먹", "먹지", "먹으", "먹고"], correct: 1, explanation: "否定形は「-지 않다」です。" },
+            { id: 29, level: "1級", type: "文法", question: "내일 영화를 (   ) 거예요.", options: ["볼", "본", "보는", "봅"], correct: 0, explanation: "未来・意志を表す「-(으)ㄹ 거예요」には、パッチムがない場合「ㄹ」が付き「볼 거예요」になります。" },
+            { id: 30, level: "1級", type: "文法", question: "선생님은 한국어(   ) 가르칩니다.", options: ["를", "가", "의", "도"], correct: 0, explanation: "「韓国語『を』教える」なので「를」です。" },
+            { id: 31, level: "1級", type: "否定", question: "저는 김치를 (   ) 먹어요.", options: ["안", "않", "못", "없"], correct: 0, explanation: "単純な否定「食べません」は動詞の前に「안」を置きます。" },
+            { id: 32, level: "1級", type: "命令", question: "여기에 (   ).", options: ["앉으세요", "앉았어요", "앉아요", "앉고 싶어요"], correct: 0, explanation: "「ここに座ってください」という命令・要請は「-(으)세요」を使います。" },
+            { id: 33, level: "1級", type: "現在進行", question: "지금 무엇을 (   )?", options: ["해요", "하고 있어요", "했어요", "할 거예요"], correct: 1, explanation: "「今」何をしているか（進行中）を問う場合「-고 있다」が最も具体的です。" },
+            { id: 34, level: "1級", type: "勧誘", question: "같이 점심을 (   ).", options: ["먹읍시다", "먹으세요", "먹습니다", "먹었습니다"], correct: 0, explanation: "「一緒に～しましょう」という勧誘は「-(으)ㅂ시다」を使います。" },
+            { id: 35, level: "1級", type: "文法", question: "한국 음식이 (   ) 맛있어요.", options: ["맵고", "맵어서", "맵면", "맵지만"], correct: 3, explanation: "「辛い『けど』美味しい」という逆接なので「-지만」が自然です。" },
+            { id: 36, level: "1級", type: "尊敬", question: "할아버지께서 (   ).", options: ["잡니다", "주무십니다", "자요", "잡수십니다"], correct: 1, explanation: "「寝る(자다)」の尊敬語は「주무시다」です。" },
+            { id: 37, level: "1級", type: "文法", question: "저는 학생이 (   ). 회사원입니다.", options: ["입니다", "아닙니다", "없습니다", "있습니다"], correct: 1, explanation: "「学生ではありません」と否定する必要があるため「아닙니다」が正解です。" },
+            { id: 38, level: "1級", type: "文法", question: "가: 어디에 가요?\n나: 밥을 (   ) 식당에 가요.", options: ["먹으러", "먹고", "먹어서", "먹으면"], correct: 0, explanation: "移動の目的「～しに行く」は「-(으)러 가다」を使います。" },
+            { id: 39, level: "1級", type: "文法", question: "이 옷을 (   ) 보세요.", options: ["입어", "입고", "입으", "입지"], correct: 0, explanation: "「～してみる（試す）」は「-아/어 보다」なので「입어 보세요」となります。" },
+            { id: 40, level: "1級", type: "文法", question: "시간이 (   ) 택시를 탔어요.", options: ["없고", "없어서", "없으면", "없지만"], correct: 1, explanation: "タクシーに乗った理由（時間がなくて）なので「-어서(理由)」を使います。" },
+
+            // Level 2: Intermediate Grammar & Particles (41-60)
+            { id: 41, level: "2級", type: "文法", question: "한국말을 (   ) 수 있어요.", options: ["하", "한", "할", "하는"], correct: 2, explanation: "可能形「-(으)ㄹ 수 있다」なので「할 수 있다」になります。" },
+            { id: 42, level: "2級", type: "文法", question: "숙제를 (   ) 후에 잤어요.", options: ["한", "할", "하고", "하면"], correct: 0, explanation: "「～した後で」は「-(으)ㄴ 후에」です。" },
+            { id: 43, level: "2級", type: "文法", question: "약속 시간에 (   ) 마세요.", options: ["늦지", "늦은", "늦게", "늦고"], correct: 0, explanation: "禁止「～しないでください」は「-지 마세요」です。" },
+            { id: 44, level: "2級", type: "文法", question: "창문을 (   ) 될까요?", options: ["열어도", "열면", "열고", "열어서"], correct: 0, explanation: "許可を求める「～してもいいですか」は「-아/어도 되다」です。" },
+            { id: 45, level: "2級", type: "文法", question: "비가 올 것 (   ) 우산을 가져가세요.", options: ["같으니까", "같아서", "같으면", "같지만"], correct: 0, explanation: "推測＋理由「降りそうだから」。「-(으)ㄹ 것 같다」+「-(으)니까」=「같으니까」。理由による勧誘・命令文では「-니까」を使います。" },
+            { id: 46, level: "2級", type: "文法", question: "가: 제주도에 가 봤어요?\n나: 네, 작년에 (   ) 봤어요.", options: ["가", "오", "보", "하"], correct: 0, explanation: "経験「行ったことがある」は「가 봤어요」です。" },
+            { id: 47, level: "2級", type: "文法", question: "이 가방은 가볍고 (   ) 좋아요.", options: ["싸서", "싸면", "싸니까", "싸지만"], correct: 0, explanation: "「軽くて（並列）、安くて（理由）良い」。「-아서/어서」は理由を表します。" },
+            { id: 48, level: "2級", type: "文法", question: "모르는 단어가 있으면 사전을 (   ) 보세요.", options: ["찾아", "찾고", "찾지", "찾은"], correct: 0, explanation: "「探してみる」は「찾아 보다」です。" },
+            { id: 49, level: "2級", type: "文法", question: "저는 매일 아침 7시에 (   ).", options: ["일어납니다", "일어났습니다", "일어날 것입니다", "일어나고 싶습니다"], correct: 0, explanation: "習慣的な動作（毎日）は現在形を使います。" },
+            { id: 50, level: "2級", type: "文法", question: "어제 너무 많이 (   ) 배가 아팠어요.", options: ["먹어서", "먹고", "먹으면", "먹지만"], correct: 0, explanation: "「食べすぎて（理由）」なので「먹어서」です。" },
+            { id: 51, level: "2級", type: "接続詞", question: "김치는 맵습니다. (   ) 맛있습니다.", options: ["하지만", "그래서", "그러면", "그리고"], correct: 0, explanation: "逆接の内容をつなぐので「하지만(しかし)」が適切です。" },
+            { id: 52, level: "2級", type: "文法", question: "약을 (   ) 감기가 나아요.", options: ["먹으면", "먹어야", "먹어서", "먹는데"], correct: 0, explanation: "「飲めば（条件）」治ります、なので「먹으면」が自然です。" },
+            { id: 53, level: "2級", type: "文法", question: "가: 주말에 뭐 할 거예요?\n나: 집에서 (   ) 할 거예요.", options: ["청소나", "청소도", "청소만", "청소는"], correct: 0, explanation: "「掃除でも（選択・例示）」の「-(이)나」が自然です。" },
+            { id: 54, level: "2級", type: "文法", question: "친구에게 선물을 (   ) 샀어요.", options: ["주려고", "주러", "주면", "주어서"], correct: 0, explanation: "意図・目的「あげるために」は「-(으)려고」を使います。" },
+            { id: 55, level: "2級", type: "文法", question: "지하철이 버스보다 더 (   ).", options: ["빨라요", "빨리요", "빠르게", "빠릅니다"], correct: 0, explanation: "比較級の文末。「速いです」は「빨라요」または「빠릅니다」ですが、会話体で自然な「빨라요」を選びます。" },
+            { id: 56, level: "2級", type: "文法", question: "이 구두는 너무 (   ) 못 신어요.", options: ["작아서", "작고", "작으면", "작지만"], correct: 0, explanation: "「小さくて（理由）履けません」なので「작아서」です。" },
+            { id: 57, level: "2級", type: "文法", question: "한국 친구를 (   ) 한국어가 늘었어요.", options: ["사귀어서", "사귀고", "사귀면", "사귀지만"], correct: 0, explanation: "「付き合って（結果・理由）」なので「사귀어서」です。" },
+            { id: 58, level: "2級", type: "文法", question: "그 영화는 별로 (   ).", options: ["재미없어요", "재미있어요", "좋아요", "슬퍼요"], correct: 0, explanation: "副詞「별로(あまり)」は否定的な表現と一緒に使います。" },
+            { id: 59, level: "2級", type: "文法", question: "제 동생은 노래를 잘 (   ).", options: ["해요", "불러요", "춰요", "가요"], correct: 1, explanation: "「歌を歌う」は「노래를 부르다」です。" },
+            { id: 60, level: "2級", type: "文法", question: "선생님, 말씀 좀 (   ) 보세요.", options: ["물어", "들어", "여쭤", "말해"], correct: 2, explanation: "「尋ねてみる」の謙譲語は「여쭤 보다」です。" },
+
+            // Level 2: Reading & Context (61-80)
+            { id: 61, level: "2級", type: "読解", question: "다음 글의 내용과 같은 것을 고르십시오.\n[ 저는 매일 아침 수영을 합니다. 수영을 한 후에 아침을 먹습니다. ]", options: ["밥을 먹고 수영을 합니다.", "수영을 하고 밥을 먹습니다.", "아침에 수영을 안 합니다.", "저녁에 수영을 합니다."], correct: 1, explanation: "「水泳をした後で朝食を食べる」ので、2番が正解です。" },
+            { id: 62, level: "2級", type: "読解", question: "가: 이 옷 어때요?\n나: 예쁜데 좀 (   ).", options: ["비싸요", "싸요", "좋아요", "작아요"], correct: 0, explanation: "「きれいだけど～」と逆接が来ているので、ネガティブな要素（高い、など）が来るのが自然です。「高い(비싸요)」が適切。" },
+            { id: 63, level: "2級", type: "読解", question: "[ 극장에 갔습니다. 사람이 많았습니다. 표가 없어서 영화를 못 봤습니다. ]\n왜 영화를 못 봤습니까?", options: ["시간이 없어서", "표가 없어서", "돈이 없어서", "사람이 없어서"], correct: 1, explanation: "本文に「표가 없어서(チケットがなくて)」と書いてあります。" },
+            { id: 64, level: "2級", type: "読解", question: "가: 내일 시간이 있어요?\n나: 미안해요. 내일은 약속이 (   ).", options: ["있어요", "없어요", "좋아요", "싫어요"], correct: 0, explanation: "断っている（ごめんなさい）ので、約束が「ある(있어요)」が正解です。" },
+            { id: 65, level: "2級", type: "読解", question: "가: 공항까지 어떻게 가요?\n나: 공항버스를 (   ).", options: ["타세요", "타지 마세요", "탔어요", "타고 싶어요"], correct: 0, explanation: "行き方を教えているので、指示・勧誘の「乗ってください(타세요)」が適切です。" },
+            { id: 66, level: "2級", type: "読解", question: "저는 요리하는 것을 좋아합니다. 그래서 자주 음식을 (   ).", options: ["만듭니다", "먹습니다", "삽니다", "팝니다"], correct: 0, explanation: "料理が好きだから、料理（食べ物）を「作ります(만듭니다)」が自然です。" },
+            { id: 67, level: "2級", type: "読解", question: "가: 한국어를 잘하시네요.\n나: 아니에요. 아직 (   ).", options: ["잘 못해요", "잘해요", "좋아해요", "싫어해요"], correct: 0, explanation: "褒め言葉に対する謙遜なので「まだ上手ではありません(잘 못해요)」が適切です。" },
+            { id: 68, level: "2級", type: "読解", question: "날씨가 춥습니다. 따뜻한 옷을 (   ).", options: ["입으십시오", "벗으십시오", "사십시오", "보십시오"], correct: 0, explanation: "寒いので暖かい服を「着てください(입으십시오)」が適切です。" },
+            { id: 69, level: "2級", type: "読解", question: "저는 학생입니다. (   ) 한국 대학교에서 공부합니다.", options: ["그래서", "그러나", "하지만", "왜냐하면"], correct: 0, explanation: "「学生です。だから(그래서)韓国の大学で勉強しています」と因果関係がつながります。" },
+            { id: 70, level: "2級", type: "読解", question: "가: 실례지만, 우체국이 어디에 있어요?\n나: 저기 편의점 (   )에 있어요.", options: ["옆", "안", "위", "사이"], correct: 0, explanation: "建物の位置関係。「隣(옆)」が最も一般的です。" },
+            { id: 71, level: "2級", type: "読解", question: "저는 음악 듣는 것을 좋아합니다. 취미는 (   )입니다.", options: ["음악 감상", "운동", "독서", "영화 감상"], correct: 0, explanation: "「音楽を聴くこと」＝「音楽鑑賞(음악 감상)」です。" },
+            { id: 72, level: "2級", type: "読解", question: "가: 저녁에 뭐 먹을까요?\n나: 날씨가 추우니까 (   ) 음식을 먹어요.", options: ["따뜻한", "차가운", "시원한", "매운"], correct: 0, explanation: "寒いので「温かい(따뜻한)」食べ物が自然です。" },
+            { id: 73, level: "2級", type: "読解", question: "가: 주말 잘 보냈어요?\n나: 네, 집에서 (   ) 쉬었어요.", options: ["푹", "꼭", "늘", "잘못"], correct: 0, explanation: "「ぐっすり/ゆっくり」休む、にかかる副詞は「푹」です。" },
+            { id: 74, level: "2級", type: "読解", question: "이 물건은 (   )에 쌉니다. 백화점은 비쌉니다.", options: ["시장", "학교", "공원", "병원"], correct: 0, explanation: "デパート（高い）と対比される、物が安い場所は「市場(시장)」です。" },
+            { id: 75, level: "2級", type: "読解", question: "가: 언제 한국에 오셨어요?\n나: (   ) 2월에 왔어요.", options: ["작년", "내년", "내일", "모레"], correct: 0, explanation: "「来ましたか（過去）」と聞いているので、過去の「昨年(작년)」が適切です。" },
+            { id: 76, level: "2級", type: "読解", question: "가: 무슨 색을 좋아해요?\n나: 저는 (   )을 좋아해요.", options: ["파란색", "바지", "사과", "모자"], correct: 0, explanation: "「何色」と聞いているので「青色(파란색)」が正解です。" },
+            { id: 77, level: "2級", type: "読解", question: "친구에게 편지를 (   ). 우체국에 갑니다.", options: ["보내려고", "받으려고", "읽으려고", "기다리려고"], correct: 0, explanation: "郵便局に行く目的は手紙を「送るため(보내려고)」です。" },
+            { id: 78, level: "2級", type: "読解", question: "가: 생일 선물로 무엇을 받았어요?\n나: 시계를 (   ).", options: ["받았어요", "주었어요", "샀어요", "팔았어요"], correct: 0, explanation: "「何をもらいましたか」の答えは「もらいました(받았어요)」です。" },
+            { id: 79, level: "2級", type: "読解", question: "방이 너무 (   ). 청소를 해야겠어요.", options: ["더러워요", "깨끗해요", "넓어요", "좋아요"], correct: 0, explanation: "掃除をしなきゃいけない理由は「汚い(더럽다 -> 더러워요)」からです。" },
+            { id: 80, level: "2級", type: "読解", question: "가: 이 신발 신어 봐도 돼요?\n나: 네, (   ).", options: ["신어 보세요", "신지 마세요", "신었어요", "안 돼요"], correct: 0, explanation: "許可を求められた時の肯定的な返事は「履いてみてください(신어 보세요)」です。" },
+
+            // Level 2: Advanced Vocab & Grammar (81-100)
+            { id: 81, level: "2級", type: "語彙", question: "가: 회사가 어디예요?\n나: 서울역 (   )에 있어요.", options: ["근처", "사이", "가운데", "중간"], correct: 0, explanation: "「近く(근처)」が場所を示すのによく使われます。" },
+            { id: 82, level: "2級", type: "語彙", question: "길이 너무 막혀서 (   )를 탔어요.", options: ["지하철", "버스", "택시", "자동차"], correct: 0, explanation: "道が混んでいる時に選ぶのは、渋滞のない「地下鉄(지하철)」です。" },
+            { id: 83, level: "2級", type: "文法", question: "가: 한국 생활이 어때요?\n나: 처음에는 힘들었지만 지금은 (   ).", options: ["익숙해졌어요", "힘들어요", "몰라요", "싫어요"], correct: 0, explanation: "「最初は大変だったが（逆接）」なので、今は「慣れました(익숙해졌어요)」などポジティブな変化が来ます。" },
+            { id: 84, level: "2級", type: "語彙", question: "가: 여행 준비는 다 했어요?\n나: 네, 비행기 표도 사고 호텔도 (   ).", options: ["예약했어요", "약속했어요", "주문했어요", "출발했어요"], correct: 0, explanation: "ホテルは「予約する(예약하다)」ものです。" },
+            { id: 85, level: "2級", type: "文法", question: "가: 저기요, 사진 좀 찍어 주시겠어요?\n나: 네, (   ).", options: ["찍어 드릴게요", "찍어 주세요", "찍고 싶어요", "찍을 거예요"], correct: 0, explanation: "相手のために何かをする「～して差し上げます」は「-아/어 드리다」です。" },
+            { id: 86, level: "2級", type: "文法", question: "한국어를 공부한 지 1년이 (   ).", options: ["넘었어요", "지났어요", "되었어요", "all possible"], correct: 0, explanation: "期間が「過ぎた(넘었다)」や「なった(되었다)」。文脈としてはどれも正解ですが、「1年が過ぎました(넘었어요)」とします。" },
+            { id: 87, level: "2級", type: "語彙", question: "가: 성함이 어떻게 되세요?\n나: 제 (   )은/는 김민수입니다.", options: ["이름", "성함", "나이", "직업"], correct: 0, explanation: "自分のことを言うときは「お名前(성함)」ではなく「名前(이름)」を使います。" },
+            { id: 88, level: "2級", type: "語彙", question: "백화점에서 옷을 샀는데 사이즈가 안 맞아요. (   )하고 싶어요.", options: ["교환", "쇼핑", "선물", "구경"], correct: 0, explanation: "サイズが合わないので「交換(교환)」したいです。" },
+            { id: 89, level: "2級", type: "文法", question: "가: 주말에 보통 뭐 해요?\n나: 저는 영화 보는 것을 좋아해서 영화관에 (   ) 가요.", options: ["자주", "가끔", "별로", "안"], correct: 0, explanation: "好きだから「頻繁に(자주)」行くのが自然です。" },
+            { id: 90, level: "2級", type: "文法", question: "가: 내일 시험인데 공부 다 했어요?\n나: 아니요, 아직 (   ) 못 했어요.", options: ["하나도", "조금", "많이", "다"], correct: 0, explanation: "「全然～できない」は「하나도(一つも)」+否定形です。" },
+            { id: 91, level: "2級", type: "語彙", question: "가: 이 식당은 뭐가 맛있어요?\n나: 비빔밥이 (   ) 맛있어요.", options: ["제일", "아주", "너무", "참"], correct: 0, explanation: "「一番(제일)」美味しい、と比較の中で最上級を使うのが自然な文脈です。" },
+            { id: 92, level: "2級", type: "文法", question: "가: 같이 커피 마실래요?\n나: 미안해요. 지금 바빠서 (   ).", options: ["못 마셔요", "안 마셔요", "마시지 않아요", "마시고 싶어요"], correct: 0, explanation: "状況的（忙しくて）に不可能な場合は「못(できない)」を使います。" },
+            { id: 93, level: "2級", type: "文法", question: "가: 한국 노래를 부를 수 있어요?\n나: 네, (   ).", options: ["부를 수 있어요", "못 불러요", "부르지 않아요", "부르고 싶어요"], correct: 0, explanation: "「はい」と答えているので可能形「歌えます」を選びます。" },
+            { id: 94, level: "2級", type: "語彙", question: "가: 오늘 기분이 어때요?\n나: 시험에 합격해서 정말 (   ).", options: ["기뻐요", "슬퍼요", "화나요", "심심해요"], correct: 0, explanation: "合格したので「嬉しい(기뻐요)」です。" },
+            { id: 95, level: "2級", type: "文法", question: "가: 여기에 주차해도 돼요?\n나: 아니요, 여기에 주차하면 (   ).", options: ["안 돼요", "돼요", "좋아요", "괜찮아요"], correct: 0, explanation: "禁止「～してはいけません」は「-면 안 되다」です。" },
+            { id: 96, level: "2級", type: "文法", question: "날씨가 흐리네요. 비가 올 것 (   ).", options: ["같아요", "예요", "있어요", "없어요"], correct: 0, explanation: "推測「～のようだ」は「-것 같다」です。" },
+            { id: 97, level: "2級", type: "語彙", question: "가: 수미 씨, 전화 받으세요.\n나: 지금 수업 중이라서 전화를 (   ) 수 없어요.", options: ["받을", "걸", "할", "끊을"], correct: 0, explanation: "電話を「受ける」は「받다」です。" },
+            { id: 98, level: "2級", type: "文法", question: "가: 어제 왜 학교에 안 왔어요?\n나: 배가 아파서 병원에 (   ).", options: ["갔거든요", "가거든요", "갈거든요", "갔잖아요"], correct: 0, explanation: "理由を説明する「～だったんですよ」は過去形「-았/었거든요」が適切です。" },
+            { id: 99, level: "2級", type: "文法", question: "가: 한국어를 배우기가 어때요?\n나: 어렵지만 (   ).", options: ["재미있어요", "재미없어요", "쉬워요", "나빠요"], correct: 0, explanation: "「難しいけど（逆接）」、「面白い」というポジティブな対比が自然です。" },
+            { id: 100, level: "2級", type: "文法", question: "여러분, 새해 복 많이 (   ).", options: ["받으세요", "받읍시다", "받아요", "받겠습니다"], correct: 0, explanation: "新年の挨拶「明けましておめでとうございます（福をたくさん受け取ってください）」は「받으세요」と定型的に使います。" }
+        ];
+
+        // --- Logic ---
+
+        function switchTab(tab) {
+            document.querySelectorAll('button[id^="tab-"]').forEach(b => {
+                b.classList.remove('tab-active', 'text-fuchsia-400');
+                b.classList.add('text-gray-400');
+            });
+            document.getElementById(`tab-${tab}`).classList.add('tab-active', 'text-fuchsia-400');
+            document.getElementById(`tab-${tab}`).classList.remove('text-gray-400');
+
+            document.getElementById('view-grammar').classList.add('hidden');
+            document.getElementById('view-practice').classList.add('hidden');
+            document.getElementById('view-vocab').classList.add('hidden');
+            document.getElementById(`view-${tab}`).classList.remove('hidden');
+        }
+
+        function renderGrammar(filter = "") {
+            const tbody = document.getElementById('grammar-table-body');
+            tbody.innerHTML = "";
+            let count = 0;
+            
+            grammarData.forEach(item => {
+                if (item.kr.includes(filter) || item.jp.includes(filter)) {
+                    count++;
+                    const row = document.createElement('tr');
+                    row.className = "bg-white border-b border-purple-50 hover:bg-purple-50 transition-colors group";
+                    row.innerHTML = `
+                        <td class="px-5 py-4 text-xs font-bold text-purple-300 group-hover:text-purple-500 align-top">${item.id}</td>
+                        <td class="px-5 py-4 align-top">
+                            <div class="font-bold text-lg kr-text text-gray-700 group-hover:text-purple-600 transition-colors">${item.kr}</div>
+                        </td>
+                        <td class="px-5 py-4 text-gray-600 font-medium align-top">
+                            ${item.jp}
+                        </td>
+                        <td class="px-5 py-4 align-top">
+                            <div class="relative pl-3 border-l-4 border-pink-200 bg-pink-50/50 p-2 rounded-r-lg">
+                                <span class="kr-text font-medium text-gray-800 block">${item.ex_kr}</span>
+                                <span class="text-gray-500 text-xs block border-t border-pink-100 pt-1 mt-1">${item.ex_jp}</span>
+                            </div>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                }
+            });
+            document.getElementById('grammar-count').textContent = count;
+        }
+
+        function renderVocab(filter = "") {
+            const grid = document.getElementById('vocab-grid');
+            grid.innerHTML = "";
+            let count = 0;
+
+            vocabData.forEach(item => {
+                if (item.word.includes(filter) || item.mean.includes(filter)) {
+                    count++;
+                    const card = document.createElement('div');
+                    card.className = "glass-panel p-4 rounded-2xl shadow-sm border border-purple-100 hover:shadow-md transition-all group flex flex-col justify-between h-full";
+                    card.innerHTML = `
+                        <div class="flex justify-between items-start mb-2">
+                            <div>
+                                <div class="text-2xl kr-text font-bold text-gray-800 group-hover:text-purple-600">${item.word}</div>
+                            </div>
+                            <span class="px-2 py-1 text-[10px] bg-purple-100 text-purple-500 rounded-lg font-bold uppercase tracking-wider">No.${item.id}</span>
+                        </div>
+                        <div class="text-gray-600 font-bold border-b border-purple-50 pb-2 mb-2">
+                            ${item.mean}
+                        </div>
+                        <div class="bg-purple-50 rounded-lg p-2 text-sm mt-auto">
+                            <div class="kr-text text-gray-700 mb-1 leading-snug">${item.ex_kr}</div>
+                            <div class="text-xs text-gray-500">${item.ex_jp}</div>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                }
+            });
+            document.getElementById('vocab-count').textContent = count;
+        }
+
+        function renderQuestions() {
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = "";
+            
+            // Randomize array logic (Simple shuffle)
+            const shuffled = [...questionsData].sort(() => 0.5 - Math.random());
+            const selectedQuestions = shuffled.slice(0, 10);
+            
+            document.getElementById('quiz-total-count').textContent = questionsData.length;
+
+            selectedQuestions.forEach((q, index) => {
+                const qDiv = document.createElement('div');
+                qDiv.className = "glass-panel p-6 rounded-3xl shadow-sm border border-purple-100 hover:shadow-md transition-shadow relative overflow-hidden animate-fade-in-up";
+                qDiv.style.animationDelay = `${index * 100}ms`;
+                
+                const deco = document.createElement('div');
+                deco.className = "absolute -top-4 -right-4 w-16 h-16 bg-gradient-to-br from-purple-200 to-pink-200 rounded-full opacity-20 blur-xl";
+                qDiv.appendChild(deco);
+
+                let optionsHtml = "";
+                q.options.forEach((opt, optIndex) => {
+                    optionsHtml += `
+                        <label class="flex items-center space-x-3 p-3 rounded-xl border border-transparent bg-white hover:bg-purple-50 hover:border-purple-200 cursor-pointer transition-all shadow-sm">
+                            <input type="radio" name="q-${q.id}" value="${optIndex}" class="form-radio h-5 w-5 text-pink-500 border-purple-200 focus:ring-pink-300">
+                            <span class="kr-text text-gray-600 font-medium">${optIndex + 1}. ${opt}</span>
+                        </label>
+                    `;
+                });
+
+                const contentDiv = document.createElement('div');
+                contentDiv.className = "relative z-10";
+                contentDiv.innerHTML = `
+                    <div class="flex justify-between items-start mb-4">
+                        <div class="flex gap-2">
+                            <span class="inline-block px-3 py-1 text-xs font-bold text-white bg-gradient-to-r from-purple-400 to-pink-400 rounded-full shadow-sm shadow-pink-200">${q.type}</span>
+                            <span class="inline-block px-3 py-1 text-xs font-bold text-purple-500 bg-purple-100 rounded-full border border-purple-200">${q.level}</span>
+                        </div>
+                        <span class="text-sm font-bold text-purple-200">Q${index + 1}</span>
+                    </div>
+                    <div class="mb-5 pl-1">
+                        <p class="text-lg kr-text font-bold text-gray-800 whitespace-pre-line leading-relaxed">${q.question}</p>
+                    </div>
+                    <div class="space-y-3 mb-6">
+                        ${optionsHtml}
+                    </div>
+                    <button onclick="checkAnswer(${q.id}, ${q.correct})" id="btn-${q.id}" class="w-full sm:w-auto text-sm bg-gray-800 text-white px-6 py-3 rounded-xl hover:bg-gray-700 transition font-bold shadow-lg shadow-gray-200">
+                        Check! ♡
+                    </button>
+                    <div id="feedback-${q.id}" class="hidden mt-4 p-4 rounded-xl text-sm animate-fade-in-up"></div>
+                `;
+                qDiv.appendChild(contentDiv);
+                container.appendChild(qDiv);
+            });
+        }
+
+        function checkAnswer(id, correctIndex) {
+            const selected = document.querySelector(`input[name="q-${id}"]:checked`);
+            const feedback = document.getElementById(`feedback-${id}`);
+            const btn = document.getElementById(`btn-${id}`);
+            
+            if (!selected) {
+                alert("答えを選んでね♡");
+                return;
+            }
+
+            const val = parseInt(selected.value);
+            const isCorrect = val === correctIndex;
+            const qData = questionsData.find(q => q.id === id);
+
+            feedback.classList.remove('hidden');
+            
+            if (isCorrect) {
+                feedback.className = "hidden mt-4 p-5 rounded-2xl bg-green-50 border border-green-200 shadow-sm";
+                feedback.classList.remove('hidden');
+                feedback.innerHTML = `
+                    <div class="flex items-center text-green-600 font-bold mb-2 text-base">
+                        <i class="fas fa-check-circle mr-2 text-xl"></i> Perfect! (정답)
+                    </div>
+                    <p class="text-gray-700">${qData.explanation}</p>
+                `;
+            } else {
+                feedback.className = "hidden mt-4 p-5 rounded-2xl bg-red-50 border border-red-200 shadow-sm";
+                feedback.classList.remove('hidden');
+                feedback.innerHTML = `
+                    <div class="flex items-center text-red-500 font-bold mb-2 text-base">
+                        <i class="fas fa-times-circle mr-2 text-xl"></i> Don't worry! (오답)
+                    </div>
+                    <p class="text-gray-700 mb-1"><span class="font-bold bg-white px-2 py-0.5 rounded text-red-400 border border-red-100">正解: ${correctIndex + 1}번</span></p>
+                    <p class="text-gray-600 text-sm">${qData.explanation}</p>
+                `;
+            }
+            
+            document.querySelectorAll(`input[name="q-${id}"]`).forEach(el => el.disabled = true);
+            btn.classList.add('opacity-50', 'cursor-not-allowed');
+            btn.disabled = true;
+        }
+
+        // Event Listeners
+        document.getElementById('grammar-search').addEventListener('input', (e) => renderGrammar(e.target.value));
+        document.getElementById('vocab-search').addEventListener('input', (e) => renderVocab(e.target.value));
+        
+        // Init
+        renderGrammar();
+        renderVocab();
+        renderQuestions();
+
+    </script>
+</body>
+</html>
